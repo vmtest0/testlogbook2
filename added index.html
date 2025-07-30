@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Courier Logbook Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 350px;
+    }
+
+    h2, h3 {
+      text-align: center;
+      margin: 0 0 10px;
+    }
+
+    label {
+      margin-top: 15px;
+      display: block;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #222;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+    }
+
+    .dashboard {
+      display: none;
+      padding: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fff;
+      padding: 20px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .avatar {
+      background: black;
+      color: white;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+
+    .btn {
+      background: #222;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .logout {
+      background: #6c757d;
+    }
+
+    ul.log {
+      padding-left: 20px;
+    }
+
+    ul.log li {
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Section -->
+  <div class="container" id="loginSection">
+    <div class="box">
+      <h2>Switch Village Mall</h2>
+      <h3>Courier Logbook System</h3>
+
+      <form onsubmit="return login()">
+        <label for="userID">User ID</label>
+        <input type="text" id="userID" placeholder="Enter your User ID" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter your password" required>
+
+        <button type="submit">Login</button>
+
+        <div class="error" id="errorMessage"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dashboard Section -->
+  <div class="dashboard" id="dashboardSection">
+    <div class="header">
+      <div style="display: flex; align-items: center;">
+        <div class="avatar" id="initials">MDD</div>
+        <div style="margin-left: 15px;">
+          <h3 id="userName">User</h3>
+          <p id="userDetails">Admin | ID: </p>
+        </div>
+      </div>
+      <div style="text-align: right;">
+        <p id="currentTime"></p>
+        <button class="btn logout" onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>System Navigation</h3>
+      <button class="btn">Logbook</button>
+      <button class="btn">Admin Panel</button>
+    </div>
+
+    <div class="card">
+      <h3>Recent Activity</h3>
+      <ul class="log" id="activityLog"></ul>
+    </div>
+  </div>
+
+  <script>
+    const VALID_USER = "7434";
+    const VALID_PASS = "admin123";
+    const USER_NAME = "Muhammad Danial Danish";
+
+    function login() {
+      const id = document.getElementById("userID").value;
+      const pass = document.getElementById("password").value;
+      const error = document.getElementById("errorMessage");
+
+      if (id === VALID_USER && pass === VALID_PASS) {
+        localStorage.setItem("userID", id);
+        localStorage.setItem("userName", USER_NAME);
+        localStorage.setItem("loginTime", new Date().toLocaleString());
+
+        showDashboard();
+      } else {
+        error.textContent = "Invalid User ID or Password.";
+      }
+
+      return false; // prevent form submit
+    }
+
+    function logout() {
+      localStorage.clear();
+      document.getElementById("dashboardSection").style.display = "none";
+      document.getElementById("loginSection").style.display = "flex";
+    }
+
+    function showDashboard() {
+      const id = localStorage.getItem("userID");
+      const name = localStorage.getItem("userName");
+      const loginTime = localStorage.getItem("loginTime");
+
+      if (!id || !name) return;
+
+      document.getElementById("userName").textContent = name;
+      document.getElementById("userDetails").textContent = `Admin | ID: ${id}`;
+      document.getElementById("currentTime").textContent = new Date().toLocaleString();
+
+      const activityLog = document.getElementById("activityLog");
+      activityLog.innerHTML = `
+        <li><strong>User logged in</strong> by ${id} on ${loginTime}</li>
+        <li><strong>User logged out</strong> by ${id} on 30/07/2025 12:29:05</li>
+        <li><strong>User logged in</strong> by ${id} on 30/07/2025 12:28:56</li>
+      `;
+
+      document.getElementById("initials").textContent = "MDD";
+      document.getElementById("loginSection").style.display = "none";
+      document.getElementById("dashboardSection").style.display = "block";
+    }
+
+    // Auto show dashboard if already logged in
+    window.onload = function () {
+      if (localStorage.getItem("userID")) {
+        showDashboard();
+      }
+    };
+  </script>
+
+</body>
+</html>
